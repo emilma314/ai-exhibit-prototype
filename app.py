@@ -28,7 +28,9 @@ if __name__ == '__main__':
 
 @app.route('/exhibit2')
 def exhibit2():
-    return render_template('exhibit2.html')
+    styles = {'pikachu-replace.png': "Pokemon", 'pollock.jpeg': "Pollock", 'spongebob.png': "Spongebob", 'weeping_woman.jpg': "Picasso"}
+    return render_template('exhibit2.html', styles=styles)
+   
 
 @app.route('/denoise')
 def denoise():
