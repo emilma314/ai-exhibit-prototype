@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Occurrences of "{{ word }}"
+{% endblock %}
+
+{% block main %}
+    <h1>Occurrences of "{{ word }}"</h1>
+    <ul>
+        {% for occurrence in occurrences %}
+            <li>{{ occurrence | safe }}</li>
+        {% endfor %}
+    </ul>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const word = "{{ word }}";
+            const regex = new RegExp(`(${word})`, 'gi');
+            document.querySelectorAll('li').forEach(li => {
+                li.innerHTML = li.innerHTML.replace(regex, '<span style="background-color: yellow;">$1</span>');
+            });
+        });
+    </script>
+{% endblock %}

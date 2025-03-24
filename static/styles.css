@@ -1,0 +1,62 @@
+/* Size for brand */
+nav .navbar-brand
+{
+    font-size: xx-large;
+}
+
+/* Colors for brand */
+nav .navbar-brand .blue
+{
+    color: #537fbe;
+}
+nav .navbar-brand .red
+{
+    color: #ea433b;
+}
+nav .navbar-brand .yellow
+{
+    color: #f5b82e;
+}
+nav .navbar-brand .green
+{
+    color: #2e944b;
+}
+.row {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+.image {
+    margin: 0 5px;
+    transition: transform 0.3s ease;
+}
+
+.small-img {
+    width: 200px; /* You can adjust the size as needed */
+    height: auto;
+}
+
+.image:hover {
+    transform: scale(1.1);
+}
+
+.btn {
+    border: 2px solid black;
+    border-radius: 5px;
+    background-color: white;
+    color: black;
+    padding: 14px 28px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+.difficulty {
+    border-color: #ff9800;
+    color: orange;
+  }
+
+.difficulty:hover {
+    background: #ff9800;
+    color: white;
+  }

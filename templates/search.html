@@ -1,0 +1,134 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Search
+{% endblock %}
+
+{% block main %}
+    <style type="text/css">
+        .hidden {
+            clip: rect(0 0 0 0);
+            clip-path: inset(50%);
+            height: 1px;
+            overflow: hidden;
+            position: absolute;
+            white-space: nowrap;
+            width: 1px;
+        }
+        .pagination button.active {
+            font-weight: bold;
+        }
+        .scrolling-table {
+            height: 400px;
+            overflow-y: scroll;
+            display: block;
+        }
+        .scrolling-table thead, .scrolling-table tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        .scrolling-table thead {
+            width: calc(100% - 1em);
+        }
+    </style>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            const content = document.querySelector('.content');
+            const searchInput = document.querySelector('input[name="search"]');
+            const itemsPerPage = 25;
+            let currentPage = 0;
+            let items = Array.from(content.getElementsByTagName('tr')).slice(1);
+
+            function showPage(page) {
+                const startIndex = page * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                items.forEach((item, index) => {
+                    item.classList.toggle('hidden', index < startIndex || index >= endIndex);
+                });
+                updateButtonStates();
+            }
+
+            function createNavigationButtons() {
+                const paginationContainer = document.createElement('div');
+                paginationContainer.classList.add('pagination');
+                content.appendChild(paginationContainer);
+
+                const prevButton = document.createElement('button');
+                prevButton.textContent = 'Previous';
+                prevButton.addEventListener('click', () => {
+                    if (currentPage > 0) {
+                        currentPage--;
+                        showPage(currentPage);
+                    }
+                });
+                paginationContainer.appendChild(prevButton);
+
+                const nextButton = document.createElement('button');
+                nextButton.textContent = 'Next';
+                nextButton.addEventListener('click', () => {
+                    if (currentPage < Math.ceil(items.length / itemsPerPage) - 1) {
+                        currentPage++;
+                        showPage(currentPage);
+                    }
+                });
+                paginationContainer.appendChild(nextButton);
+            }
+
+            function updateButtonStates() {
+                const paginationContainer = document.querySelector('.pagination');
+                const buttons = paginationContainer.getElementsByTagName('button');
+                buttons[0].disabled = (currentPage === 0);
+                buttons[1].disabled = (currentPage === Math.ceil(items.length / itemsPerPage) - 1);
+            }
+
+            function filterItems(query) {
+                const filteredItems = items.filter(item => {
+                    const word = item.querySelector('td').textContent.toLowerCase();
+                    return word.includes(query.toLowerCase());
+                });
+                items.forEach(item => item.classList.add('hidden')); // Hide all rows initially
+                filteredItems.forEach(item => item.classList.remove('hidden')); // Show only filtered rows
+            }
+
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value;
+                filterItems(query);
+            });
+
+            items.forEach(item => item.classList.add('hidden')); // Hide all rows initially
+            createNavigationButtons();
+            showPage(currentPage); // Show the first page
+        });
+    </script>
+
+    <div class="mb-3">
+        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="search" placeholder="Search" type="text">
+    </div>
+    <article class="content">
+        <table class="scrolling-table">
+            <thead>
+                <tr>
+                    <th scope="col">Word</th>
+                    <th scope="col">Frequency</th>
+                    <th scope="col">See All Occurrences</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in database %}
+                    <tr>
+                        <td>{{ row["word"] }}</td>
+                        <td>{{ row["frequency"] }}</td>
+                        <td>
+                            <form action="occurrences.html" method="GET">
+                                <input type="hidden" name="word" value="{{ row['word'] }}">
+                                <button type="submit">Find Occurrences</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+
+{% endblock %}

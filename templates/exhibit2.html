@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Exhibit 2
+{% endblock %}
+
+{% block main %}
+    <h2>Exhibit 2: Image Pairs</h2>
+    <p>Click on a pair of images to explore their corresponding code.</p>
+
+    <div class="image-pair" onclick="showDenoisingProcess('pair1')">
+        <img src="{{ url_for('static', filename='images/clean/campanile1.jpg') }}" class="image small-img">
+        <img src="{{ url_for('static', filename='images/CampanilePicasso17/Campanile_Picasso_1.png') }}" class="image small-img">
+    </div>
+
+    <div class="image-pair" onclick="showDenoisingProcess('pair2')">
+        <img src="{{ url_for('static', filename='images/clean/golden_gate_high_res.jpg') }}" class="image small-img">
+        <img src="{{ url_for('static', filename='images/GoldenGatePicasso17/GoldenGate_Picasso_1.png') }}" class="image small-img">
+    </div>
+
+    <div class="image-pair" onclick="showDenoisingProcess('pair3')">
+        <img src="{{ url_for('static', filename='images/clean/liberty.jpg') }}" class="image small-img">
+        <img src="{{ url_for('static', filename='images/LibertyPicasso17/Liberty_Picasso_1.png') }}" class="image small-img">
+    </div>
+
+    <div class="image-pair" onclick="showDenoisingProcess('pair4')">
+        <img src="{{ url_for('static', filename='images/clean/lhs.jpg') }}" class="image small-img">
+        <img src="{{ url_for('static', filename='images/LHSPicasso17/LHS_Picasso_1.png') }}" class="image small-img">
+    </div>
+
+    <div id="denoising-demo" style="display: none; margin-top: 30px; text-align: center;">
+        <h3>Denoising Process</h3>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <img id="original-img" src="" class="image small-img" alt="Original Image">
+            <span>&rarr; Noise is added &rarr;</span>
+            <img id="noisy-img" src="" class="image small-img" alt="Noisy Image">
+            <img id="denoised-img1" src="" class="image small-img" alt="Denoised Step 1">
+            <img id="denoised-img2" src="" class="image small-img" alt="Denoised Step 2">
+        </div>
+    </div>
+
+    <script>
+        function redirectToPage(pair) {
+            window.location.href = `/display_code?pair=${pair}`;
+        }
+
+        function showDenoisingProcess(pair) {
+            const originalImage = `{{ url_for('static', filename='images/${pair}_1.jpg') }}`;
+            const noisyImage = `{{ url_for('static', filename='images/${pair}_noisy.jpg') }}`;
+            const denoised1 = `{{ url_for('static', filename='images/${pair}_denoised1.jpg') }}`;
+            const denoised2 = `{{ url_for('static', filename='images/${pair}_denoised2.jpg') }}`;
+
+            document.getElementById("original-img").src = originalImage;
+            document.getElementById("noisy-img").src = noisyImage;
+            document.getElementById("denoised-img1").src = denoised1;
+            document.getElementById("denoised-img2").src = denoised2;
+            document.getElementById("denoising-demo").style.display = "block";
+        }
+
+        document.querySelectorAll(".image-pair").forEach(pair => {
+            pair.addEventListener("click", () => {
+                const pairId = pair.getAttribute("onclick").match(/'([^']+)'/)[1];
+                showDenoisingProcess(pairId);
+            });
+        });
+    </script>
+
+    <style>
+        .image-pair {
+            display: flex;
+            gap: 10px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            border: 2px solid transparent;
+            padding: 5px;
+        }
+        .image-pair:hover {
+            border: 2px solid blue;
+        }
+        .small-img {
+            width: 100px;
+            height: auto;
+        }
+    </style>
+{% endblock %}
+
+

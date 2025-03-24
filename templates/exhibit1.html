@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Select Difficulty
+{% endblock %}
+
+{% block main %}
+    <h2>Select Difficulty</h2>
+    <div>
+        <a href="{{ url_for('match', difficulty='easy') }}" class="btn difficulty">Easy</a>
+        <a href="{{ url_for('match', difficulty='hard') }}" class="btn difficulty">Hard</a>
+    </div>
+{% endblock %}
