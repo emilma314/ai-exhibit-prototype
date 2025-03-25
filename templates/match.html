@@ -10,30 +10,30 @@
 
     {% if difficulty == 'hard' %}
         <!-- Hard Game: Strength 0.8 -->
-        <h3>Original Images</h3>
+        <h3>Fuzzed Images</h3>
         <div class="row" id="topRow">
             <img id="img5" src="{{ url_for('static', filename='images/LibertyPicasso17/Liberty_Picasso_1.png') }}" class="image small-img" onclick="selectImage('top', 'img5')">
             <img id="img6" src="{{ url_for('static', filename='images/CampanilePicasso17/Campanile_Picasso_1.png') }}" class="image small-img" onclick="selectImage('top', 'img6')">
             <img id="img7" src="{{ url_for('static', filename='images/LHSPicasso17/LHS_Picasso_1.png') }}" class="image small-img" onclick="selectImage('top', 'img7')">
             <img id="img8" src="{{ url_for('static', filename='images/GoldenGatePicasso17/GoldenGate_Picasso_1.png') }}" class="image small-img" onclick="selectImage('top', 'img8')">
         </div>
-        <h3>Fuzzed Images</h3>
+        <h3>Original Images</h3>
         <div class="row" id="bottomRow">
-            <img id="img1" src="{{ url_for('static', filename='images/clean/Campanile1.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img1')">
+            <img id="img1" src="{{ url_for('static', filename='images/clean/Campanile.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img1')">
             <img id="img2" src="{{ url_for('static', filename='images/clean/GoldenGate.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img2')">
             <img id="img3" src="{{ url_for('static', filename='images/clean/Liberty.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img3')">
             <img id="img4" src="{{ url_for('static', filename='images/clean/LHS.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img4')">
         </div>
     {% elif difficulty == 'easy' %}
         <!-- Easy Game: Strength 0.6 -->
-        <h3>Original Images</h3>
+        <h3>Fuzzed Images</h3>
         <div class="row" id="topRow">
             <img id="img13" src="{{ url_for('static', filename='images/LibertyPicasso17Easy/Liberty_Picasso_1Easy.png') }}" class="image small-img" onclick="selectImage('top', 'img13')">
             <img id="img14" src="{{ url_for('static', filename='images/LHSPicasso17Easy/LHS_Picasso_1Easy.png') }}" class="image small-img" onclick="selectImage('top', 'img14')">
             <img id="img15" src="{{ url_for('static', filename='images/GoldenGatePicasso17Easy/GoldenGate_Picasso_1Easy.png') }}" class="image small-img" onclick="selectImage('top', 'img15')">
             <img id="img16" src="{{ url_for('static', filename='images/CampanilePicasso17Easy/Campanile_Picasso_1Easy.png') }}" class="image small-img" onclick="selectImage('top', 'img16')">
         </div>
-        <h3>Fuzzed Images</h3>
+        <h3>Original Images</h3>
         <div class="row" id="bottomRow">
             <img id="img9" src="{{ url_for('static', filename='images/clean/Campanile.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img9')">
             <img id="img10" src="{{ url_for('static', filename='images/clean/GoldenGate.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img10')">
