@@ -29,6 +29,8 @@
         {% for style,artist in styles.items() %}
         <div class="style-option" onclick="selectStyle('{{ artist }}', '{{ style }}')">
             <img src="{{ url_for('static', filename='images/styles/' + style) }}" class="image small-img">
+            <p style="margin: 0.5px;"> "In the style of </p>
+            </p style="margin: 0.5px;""> {{ artist }}"</p> <!-- Added image title below each style -->
         </div>
         {% endfor %}
     </div>
