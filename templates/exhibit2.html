@@ -34,7 +34,11 @@
         {% endfor %}
     </div>
 
-    <button onclick="confirmSelection()">Apply Style</button>
+    <div class="button-container">
+        <div style="flex-grow: 1;"></div> <!-- Left spacer -->
+        <button onclick="confirmSelection()" class="primary-button">Apply Style</button>
+        <button onclick="window.location.href='/exhibit1'" class="nav-button">View Exhibit 1</button>
+    </div>
 
     <!-- Displaying the images after confirmation -->
     <div id="result-display" style="display: none; margin-top: 30px;">
@@ -65,6 +69,7 @@
             </div>
         </div>
     </div>
+
 
     <script>
         let selectedImage = "";
@@ -107,21 +112,26 @@
             animationTimeouts.forEach(timeout => clearTimeout(timeout));
             animationTimeouts = [];
             
-            // Stop and hide the GIF
+            // Reset all elements to their initial state
+            const elements = [
+                document.getElementById("original-container"),
+                document.getElementById("first-step-container"),
+                document.getElementById("gif-container"),
+                document.getElementById("styled-container")
+            ];
+            
+            elements.forEach(el => {
+                el.style.left = "0px";
+                el.style.opacity = "0";
+            });
+            
+            // Ensure the original container is visible
+            document.getElementById("original-container").style.opacity = "1";
+            
+            // Clear the GIF source
             if (gifObject) {
                 gifObject.src = "";
-                gifObject.style.opacity = "0";
-                gifObject = null;
             }
-            
-            // Reset positions and opacity
-            document.getElementById("original-container").style.left = "0px";
-            document.getElementById("first-step-container").style.left = "0px";
-            document.getElementById("first-step-container").style.opacity = "0";
-            document.getElementById("gif-container").style.left = "0px";
-            document.getElementById("gif-container").style.opacity = "0";
-            document.getElementById("styled-container").style.left = "0px";
-            document.getElementById("styled-container").style.opacity = "0";
         }
 
         function scrollToResults() {
@@ -148,15 +158,14 @@
             let firstStepImage = `${imageBaseName}_${selectedStyle}_1.png`;
             let finalImageName = `${imageBaseName}_${selectedStyle}_16.png`;
 
-            // Set image sources (except GIF)
+            // Set image sources
             document.getElementById("selected-image").src = cleanBasePath + selectedImage;
             document.getElementById("first-step-image").src = styledFolderBasePath + `${imageBaseName}${selectedStyle}17/` + firstStepImage;
             document.getElementById("styled-image").src = styledFolderBasePath + `${imageBaseName}${selectedStyle}17/` + finalImageName;
 
             // Get reference to GIF element
             gifObject = document.getElementById("processing-gif");
-            gifObject.src = ""; // Ensure it's empty initially
-
+            
             // Show the result display container
             document.getElementById("result-display").style.display = "block";
             
@@ -183,9 +192,13 @@
                     
                     // Wait 3 seconds before next step
                     animationTimeouts.push(setTimeout(function() {
-                        // 3. Show GIF starting at first step's position (not original)
+                        // 3. Show GIF starting at first step's position
                         const gifContainer = document.getElementById("gif-container");
-                        gifObject.src = gifBasePath + gifName;
+                        
+                        // Force reload the GIF by adding a timestamp parameter
+                        const timestamp = new Date().getTime();
+                        gifObject.src = gifBasePath + gifName + "?" + timestamp;
+                        
                         gifContainer.style.left = positions.firstStep + "px";
                         gifContainer.style.opacity = "1";
                         
@@ -194,7 +207,7 @@
                         
                         // Wait 7.5 seconds before final step
                         animationTimeouts.push(setTimeout(function() {
-                            // 4. Show styled image starting at GIF's position (not original)
+                            // 4. Show styled image starting at GIF's position
                             const styledContainer = document.getElementById("styled-container");
                             styledContainer.style.left = positions.processing + "px";
                             styledContainer.style.opacity = "1";
@@ -207,36 +220,61 @@
             }, 3000)); // Initial 3 second delay
         }
     </script>
-
-    <style>
-        .image-option, .style-option {
-            display: inline-block;
-            cursor: pointer;
-            margin: 10px;
-            border: 2px solid transparent;
-            padding: 5px;
-        }
-        .image-option.selected, .style-option.selected {
-            border: 2px solid blue;
-        }
-        .small-img {
-            width: 100px;
-            height: auto;
-        }
-        .large-img {
-            width: 300px;
-            height: auto;
-        }
-        #result-display {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        #result-display > div {
-            width: 100%;
-            position: relative;
-            height: 400px;
-        }
-    </style>
+<style>
+    .image-option, .style-option {
+        display: inline-block;
+        cursor: pointer;
+        margin: 10px;
+        border: 2px solid transparent;
+        padding: 5px;
+    }
+    .image-option.selected, .style-option.selected {
+        border: 2px solid blue;
+    }
+    .small-img {
+        width: 100px;
+        height: auto;
+    }
+    .large-img {
+        width: 300px;
+        height: auto;
+    }
+    #result-display {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    #result-display > div {
+        width: 100%;
+        position: relative;
+        height: 400px;
+    }
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+    .primary-button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    .primary-button:hover {
+        background-color: #45a049;
+    }
+    .nav-button {
+        padding: 10px 20px;
+        background-color: #f0f0f0;
+        color: #333;
+        border: 1px solid #ccc;
+        cursor: pointer;
+    }
+    .nav-button:hover {
+        background-color: #e0e0e0;
+    }
+</style>
 {% endblock %}
