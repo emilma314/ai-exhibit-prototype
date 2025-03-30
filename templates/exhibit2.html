@@ -29,8 +29,7 @@
         {% for style,artist in styles.items() %}
         <div class="style-option" onclick="selectStyle('{{ artist }}', '{{ style }}')">
             <img src="{{ url_for('static', filename='images/styles/' + style) }}" class="image small-img">
-            <!-- <p style="margin: 0.5px;"> "In the style of </p> -->
-            </p style="margin: 0.5px;""> {{ artist }}"</p> <!-- Added image title below each style -->
+            <p style="margin: 0.5px;">"{{ artist }}"</p>
         </div>
         {% endfor %}
     </div>
@@ -40,29 +39,29 @@
     <!-- Displaying the images after confirmation -->
     <div id="result-display" style="display: none; margin-top: 30px;">
         <h3>Result</h3>
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 20px; position: relative; height: 400px;">
             <!-- Left: Original Image -->
-            <div>
+            <div id="original-container" style="position: absolute; left: 0; transition: left 1s ease;">
                 <h4>Original Image</h4>
-                <img id="selected-image" src="" class="image large-img" alt="Selected Image">
+                <img id="selected-image" src="" class="image large-img" alt="Selected Image" style="display: block;">
             </div>
     
-            <!-- NEW: First Step Image -->
-            <div>
+            <!-- First Step Image -->
+            <div id="first-step-container" style="position: absolute; left: 0; opacity: 0; transition: all 1s ease;">
                 <h4>First Step</h4>
-                <img id="first-step-image" src="" class="image large-img" alt="First Step Image">
+                <img id="first-step-image" src="" class="image large-img" alt="First Step Image" style="display: block;">
             </div>
     
-            <!-- Middle: Processing GIF -->
-            <div>
+            <!-- Processing GIF -->
+            <div id="gif-container" style="position: absolute; left: 0; opacity: 0; transition: all 1s ease;">
                 <h4>Processing</h4>
-                <img id="processing-gif" src="" class="image large-img" alt="Processing GIF">
+                <img id="processing-gif" src="" class="image large-img" alt="Processing GIF" style="display: block;">
             </div>
     
-            <!-- Right: Final Styled Image -->
-            <div>
+            <!-- Final Styled Image -->
+            <div id="styled-container" style="position: absolute; left: 0; opacity: 0; transition: all 1s ease;">
                 <h4>Styled Image</h4>
-                <img id="styled-image" src="" class="image large-img" alt="Styled Image">
+                <img id="styled-image" src="" class="image large-img" alt="Styled Image" style="display: block;">
             </div>
         </div>
     </div>
@@ -71,6 +70,23 @@
         let selectedImage = "";
         let selectedStyle = "";
         let selectedStyleFilename = "";
+        let animationTimeouts = [];
+        let gifObject = null;
+
+        // Calculate positions for each image
+        function calculatePositions() {
+            const container = document.querySelector('#result-display > div');
+            const containerWidth = container.offsetWidth;
+            const imageWidth = 300; // matches your large-img width
+            const gap = (containerWidth - (4 * imageWidth)) / 3; // Calculate gap between images
+            
+            return {
+                original: 0,
+                firstStep: gap + imageWidth,
+                processing: 2 * (gap + imageWidth),
+                styled: 3 * (gap + imageWidth)
+            };
+        }
 
         function selectImage(image) {
             selectedImage = image;
@@ -79,11 +95,38 @@
         }
 
         function selectStyle(styleLabel, styleFilename) {
-            selectedStyle = styleLabel;  // Stores "Picasso"
-            selectedStyleFilename = styleFilename;  // Stores "weeping_woman.jpg"
+            selectedStyle = styleLabel;
+            selectedStyleFilename = styleFilename;
 
             document.querySelectorAll('.style-option').forEach(el => el.classList.remove('selected'));
             event.currentTarget.classList.add('selected');
+        }
+
+        function resetAnimation() {
+            // Clear any pending timeouts
+            animationTimeouts.forEach(timeout => clearTimeout(timeout));
+            animationTimeouts = [];
+            
+            // Stop and hide the GIF
+            if (gifObject) {
+                gifObject.src = "";
+                gifObject.style.opacity = "0";
+                gifObject = null;
+            }
+            
+            // Reset positions and opacity
+            document.getElementById("original-container").style.left = "0px";
+            document.getElementById("first-step-container").style.left = "0px";
+            document.getElementById("first-step-container").style.opacity = "0";
+            document.getElementById("gif-container").style.left = "0px";
+            document.getElementById("gif-container").style.opacity = "0";
+            document.getElementById("styled-container").style.left = "0px";
+            document.getElementById("styled-container").style.opacity = "0";
+        }
+
+        function scrollToResults() {
+            const results = document.getElementById("result-display");
+            results.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function confirmSelection() {
@@ -92,31 +135,77 @@
                 return;
             }
 
+            // Reset the animation first
+            resetAnimation();
+
             let gifBasePath = "{{ url_for('static', filename='images/gifs/') }}";
             let cleanBasePath = "{{ url_for('static', filename='images/clean/') }}";
-            let styledFolderBasePath = "{{ url_for('static', filename='images/') }}";  // Updated Path ✅
+            let styledFolderBasePath = "{{ url_for('static', filename='images/') }}";
 
             // Construct filenames
-            let gifName = `${selectedImage.split('.')[0]}${selectedStyle}17.gif`;
-            let firstStepImage = `${selectedImage.split('.')[0]}_${selectedStyle}_1.png`;   // First step ✅
-            let finalImageName = `${selectedImage.split('.')[0]}_${selectedStyle}_16.png`;  // Last frame ✅
+            let imageBaseName = selectedImage.split('.')[0];
+            let gifName = `${imageBaseName}${selectedStyle}17.gif`;
+            let firstStepImage = `${imageBaseName}_${selectedStyle}_1.png`;
+            let finalImageName = `${imageBaseName}_${selectedStyle}_16.png`;
 
-            console.log('Selected Image:', selectedImage);
-            console.log('Selected Style (Label):', selectedStyle);
-            console.log('Selected Style (Filename):', selectedStyleFilename);
-            console.log('Generated GIF Name:', gifName);
-            console.log('Intermediate Step Image:', firstStepImage);
-            console.log('Final Styled Image Name:', finalImageName);
-
-            // Set image sources
+            // Set image sources (except GIF)
             document.getElementById("selected-image").src = cleanBasePath + selectedImage;
-            document.getElementById("first-step-image").src = styledFolderBasePath + `${selectedImage.split('.')[0]}${selectedStyle}17/` + firstStepImage;
-            document.getElementById("processing-gif").src = gifBasePath + gifName;
-            document.getElementById("styled-image").src = styledFolderBasePath + `${selectedImage.split('.')[0]}${selectedStyle}17/` + finalImageName;
+            document.getElementById("first-step-image").src = styledFolderBasePath + `${imageBaseName}${selectedStyle}17/` + firstStepImage;
+            document.getElementById("styled-image").src = styledFolderBasePath + `${imageBaseName}${selectedStyle}17/` + finalImageName;
 
+            // Get reference to GIF element
+            gifObject = document.getElementById("processing-gif");
+            gifObject.src = ""; // Ensure it's empty initially
+
+            // Show the result display container
             document.getElementById("result-display").style.display = "block";
+            
+            // Scroll to the results smoothly
+            scrollToResults();
+            
+            // Calculate positions
+            const positions = calculatePositions();
+            
+            // Start the animation sequence
+            animationTimeouts.push(setTimeout(function() {
+                // 1. After 3 seconds, show first step image on top of original
+                const firstStepContainer = document.getElementById("first-step-container");
+                firstStepContainer.style.left = positions.original + "px";
+                firstStepContainer.style.opacity = "1";
+                
+                // Wait 0.5 seconds before sliding
+                animationTimeouts.push(setTimeout(function() {
+                    // 2. Slide first step to its position (1 second animation)
+                    firstStepContainer.style.left = positions.firstStep + "px";
+                    
+                    // Also move original to its final position
+                    document.getElementById("original-container").style.left = positions.original + "px";
+                    
+                    // Wait 3 seconds before next step
+                    animationTimeouts.push(setTimeout(function() {
+                        // 3. Show GIF starting at first step's position (not original)
+                        const gifContainer = document.getElementById("gif-container");
+                        gifObject.src = gifBasePath + gifName;
+                        gifContainer.style.left = positions.firstStep + "px";
+                        gifContainer.style.opacity = "1";
+                        
+                        // Immediately slide GIF to its position (1 second animation)
+                        gifContainer.style.left = positions.processing + "px";
+                        
+                        // Wait 7.5 seconds before final step
+                        animationTimeouts.push(setTimeout(function() {
+                            // 4. Show styled image starting at GIF's position (not original)
+                            const styledContainer = document.getElementById("styled-container");
+                            styledContainer.style.left = positions.processing + "px";
+                            styledContainer.style.opacity = "1";
+                            
+                            // Immediately slide styled image to its position (1 second animation)
+                            styledContainer.style.left = positions.styled + "px";
+                        }, 7500));
+                    }, 3000));
+                }, 500));
+            }, 3000)); // Initial 3 second delay
         }
-
     </script>
 
     <style>
@@ -135,15 +224,19 @@
             height: auto;
         }
         .large-img {
-            width: 300px; /* Adjust size of the images */
+            width: 300px;
             height: auto;
         }
         #result-display {
             display: flex;
-            flex-direction: row;
-            justify-content: space-evenly;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            gap: 30px;
+        }
+        #result-display > div {
+            width: 100%;
+            position: relative;
+            height: 400px;
         }
     </style>
 {% endblock %}

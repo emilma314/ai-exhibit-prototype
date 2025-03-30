@@ -5,115 +5,239 @@
 {% endblock %}
 
 {% block main %}
-    <h2>THE Image Matching Game - {{ difficulty | capitalize }}</h2>
-    <p>Select one image from the top row and one from the bottom row to find the correct match.</p>
+    <div id="gameContainer">
+        <h2>Image Matching Game - {{ difficulty | capitalize }}</h2>
+        <p>Select one image from the top row and one from the bottom row to find the correct match.</p>
 
-    {% if difficulty == 'hard' %}
-        <!-- Hard Game: Strength 0.8 -->
-        <h3>Fuzzed Images</h3>
-        <div class="row" id="topRow">
-            <img id="img5" src="{{ url_for('static', filename='images/LibertyPicasso17/Liberty_Picasso_1.png') }}" class="image small-img" onclick="selectImage('top', 'img5')">
-            <img id="img6" src="{{ url_for('static', filename='images/CampanilePicasso17/Campanile_Picasso_1.png') }}" class="image small-img" onclick="selectImage('top', 'img6')">
-            <img id="img7" src="{{ url_for('static', filename='images/LHSPicasso17/LHS_Picasso_1.png') }}" class="image small-img" onclick="selectImage('top', 'img7')">
-            <img id="img8" src="{{ url_for('static', filename='images/GoldenGatePicasso17/GoldenGate_Picasso_1.png') }}" class="image small-img" onclick="selectImage('top', 'img8')">
-        </div>
-        <h3>Original Images</h3>
-        <div class="row" id="bottomRow">
-            <img id="img1" src="{{ url_for('static', filename='images/clean/Campanile.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img1')">
-            <img id="img2" src="{{ url_for('static', filename='images/clean/GoldenGate.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img2')">
-            <img id="img3" src="{{ url_for('static', filename='images/clean/Liberty.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img3')">
-            <img id="img4" src="{{ url_for('static', filename='images/clean/LHS.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img4')">
-        </div>
-    {% elif difficulty == 'easy' %}
-        <!-- Easy Game: Strength 0.6 -->
-        <h3>Fuzzed Images</h3>
-        <div class="row" id="topRow">
-            <img id="img13" src="{{ url_for('static', filename='images/LibertyPicasso17Easy/Liberty_Picasso_1Easy.png') }}" class="image small-img" onclick="selectImage('top', 'img13')">
-            <img id="img14" src="{{ url_for('static', filename='images/LHSPicasso17Easy/LHS_Picasso_1Easy.png') }}" class="image small-img" onclick="selectImage('top', 'img14')">
-            <img id="img15" src="{{ url_for('static', filename='images/GoldenGatePicasso17Easy/GoldenGate_Picasso_1Easy.png') }}" class="image small-img" onclick="selectImage('top', 'img15')">
-            <img id="img16" src="{{ url_for('static', filename='images/CampanilePicasso17Easy/Campanile_Picasso_1Easy.png') }}" class="image small-img" onclick="selectImage('top', 'img16')">
-        </div>
-        <h3>Original Images</h3>
-        <div class="row" id="bottomRow">
-            <img id="img9" src="{{ url_for('static', filename='images/clean/Campanile.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img9')">
-            <img id="img10" src="{{ url_for('static', filename='images/clean/GoldenGate.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img10')">
-            <img id="img11" src="{{ url_for('static', filename='images/clean/Liberty.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img11')">
-            <img id="img12" src="{{ url_for('static', filename='images/clean/LHS.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img12')">
-        </div>
-    {% endif %}
+        {% if difficulty == 'hard' %}
+            <!-- Hard Game: Strength 0.8 -->
+            <h3>Fuzzed Images</h3>
+            <div class="row" id="topRow">
+                <img id="img5" src="{{ url_for('static', filename='images/LibertyPicasso17/Liberty_Picasso_1.png') }}" class="image small-img" onclick="selectImage('top', 'img5')">
+                <img id="img6" src="{{ url_for('static', filename='images/CampanilePicasso17/Campanile_Picasso_1.png') }}" class="image small-img" onclick="selectImage('top', 'img6')">
+                <img id="img7" src="{{ url_for('static', filename='images/LHSPicasso17/LHS_Picasso_1.png') }}" class="image small-img" onclick="selectImage('top', 'img7')">
+                <img id="img8" src="{{ url_for('static', filename='images/GoldenGatePicasso17/GoldenGate_Picasso_1.png') }}" class="image small-img" onclick="selectImage('top', 'img8')">
+            </div>
+            <h3>Original Images</h3>
+            <div class="row" id="bottomRow">
+                <img id="img1" src="{{ url_for('static', filename='images/clean/Campanile.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img1')">
+                <img id="img2" src="{{ url_for('static', filename='images/clean/GoldenGate.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img2')">
+                <img id="img3" src="{{ url_for('static', filename='images/clean/Liberty.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img3')">
+                <img id="img4" src="{{ url_for('static', filename='images/clean/LHS.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img4')">
+            </div>
+        {% elif difficulty == 'easy' %}
+            <!-- Easy Game: Strength 0.6 -->
+            <h3>Fuzzed Images</h3>
+            <div class="row" id="topRow">
+                <img id="img13" src="{{ url_for('static', filename='images/LibertyPicasso17Easy/Liberty_Picasso_1Easy.png') }}" class="image small-img" onclick="selectImage('top', 'img13')">
+                <img id="img14" src="{{ url_for('static', filename='images/LHSPicasso17Easy/LHS_Picasso_1Easy.png') }}" class="image small-img" onclick="selectImage('top', 'img14')">
+                <img id="img15" src="{{ url_for('static', filename='images/GoldenGatePicasso17Easy/GoldenGate_Picasso_1Easy.png') }}" class="image small-img" onclick="selectImage('top', 'img15')">
+                <img id="img16" src="{{ url_for('static', filename='images/CampanilePicasso17Easy/Campanile_Picasso_1Easy.png') }}" class="image small-img" onclick="selectImage('top', 'img16')">
+            </div>
+            <h3>Original Images</h3>
+            <div class="row" id="bottomRow">
+                <img id="img9" src="{{ url_for('static', filename='images/clean/Campanile.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img9')">
+                <img id="img10" src="{{ url_for('static', filename='images/clean/GoldenGate.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img10')">
+                <img id="img11" src="{{ url_for('static', filename='images/clean/Liberty.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img11')">
+                <img id="img12" src="{{ url_for('static', filename='images/clean/LHS.jpg') }}" class="image small-img" onclick="selectImage('bottom', 'img12')">
+            </div>
+        {% endif %}
 
-    <div id="gapContainer"></div>
-
-    <div class="button-container">
-        <button onclick="location.href='/'">Home</button>
-        <button onclick="matchImages()" class="match-button">Match</button>
-        <div id="nextLevelButton" style="display: none; bottom: 20px; right: 20px;">
-            <button id="redirectButton" onclick="redirectToNextLevel()">Next Level</button>
+        <!-- Victory Screen Elements -->
+        <div id="victoryScreen" style="display: none;">
+            <div id="gifContainer" style="margin: 20px auto; text-align: center;"></div>
+            <div id="aiExplanation" style="text-align: center">
+                <h3>This is how AI makes images!</h3>
+                <p>AI "defuzzes" images by taking away little bits of noise.</p>
+                <p>It takes its best guess at what the final image might be!</p>
+            </div>
         </div>
+
+        <div class="button-container">
+            <button onclick="location.href='/'">Home</button>
+            <button onclick="matchImages()" class="match-button">Match</button>
+            <button onclick="shuffleRows()" class="try-again-button">Try Again</button>
+            <div id="nextLevelButton" style="display: none;">
+                <button id="redirectButton" onclick="redirectToNextLevel()">Next Level</button>
+            </div>
+        </div>
+
+        <p id="result"></p>
     </div>
 
-    <p id="result"></p>
+    <!-- Confetti canvas -->
+    <canvas id="confetti-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; display: none;"></canvas>
 
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        
         .row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 10px;
             justify-items: center;
+            transition: all 0.5s ease;
         }
+        
         #topRow {
             border-bottom: 3px solid #000;
             padding-bottom: 10px;
         }
+        
         #bottomRow {
             padding-top: 10px;
         }
+        
+        .image {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            max-width: 200px;
+            max-height: 150px;
+            object-fit: contain;
+        }
+        
+        .image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
         .selected {
             border: 4px solid #00f;
             opacity: 0.8;
         }
+        
         .matched {
             opacity: 0.3;
             border: none;
+            transform: scale(0.95);
+            filter: grayscale(80%);
         }
+        
         .button-container {
-            margin-top: 20px;
+            margin: 30px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
         }
-
+        
         button {
             padding: 10px 20px;
             font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
-
+        
         .match-button {
+            background-color: #4CAF50;
+            color: white;
             margin-left: auto;
             margin-right: auto;
-            display: block;
         }
-
-        .shuffling {
-            animation: shuffleAnimation 0.5s ease-in-out;
+        
+        .try-again-button {
+            background-color: #FF9800;
+            color: white;
         }
-
-        @keyframes shuffleAnimation {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-10px); }
+        
+        .try-again-button:hover {
+            background-color: #F57C00;
+            transform: translateY(-2px);
+        }
+        
+        #nextLevelButton button {
+            background-color: #2196F3;
+            color: white;
+        }
+        
+        #victoryScreen {
+            transition: all 0.5s ease;
+        }
+        
+        .celebration-gif {
+            max-width: 200px;
+            margin: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        #aiExplanation {
+            background-color: rgba(255,255,255,0.9);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .game-complete #gameContainer > :not(#victoryScreen):not(.button-container) {
+            opacity: 0.2;
+            filter: blur(2px);
+            pointer-events: none;
+        }
+        
+        .correct-feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 72px;
+            color: #4CAF50;
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
+            z-index: 100;
+            animation: fadeInOut 1.5s;
+            display: none;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        }
+        
+        @media (max-width: 768px) {
+            .row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .image {
+                max-width: 150px;
+            }
+            .celebration-gif {
+                max-width: 200px;
+            }
         }
     </style>
 
+    <div id="correctFeedback" class="correct-feedback">✓</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
     <script>
+        // Game state variables
         let selectedTop = null;
         let selectedBottom = null;
-        let matchedPairs = 0; // To track the number of correct matches
-
+        let matchedPairs = 0;
+        const jsConfetti = new JSConfetti();
+        
+        // Correct pairs mapping
         const correctPairs = {
             "img1": "img6", "img2": "img8", "img3": "img5", "img4": "img7",
             "img9": "img16", "img10": "img15", "img11": "img13", "img12": "img14"
         };
+        
+        // GIF paths for celebration
+        const GIF_PATHS = [
+            "{{ url_for('static', filename='images/gifs/Campanile17.gif') }}",
+            "{{ url_for('static', filename='images/gifs/GoldenGate17.gif') }}",
+            "{{ url_for('static', filename='images/gifs/Liberty17.gif') }}",
+            "{{ url_for('static', filename='images/gifs/LHS17.gif') }}"
+        ];
+
+        // Initialize the game
+        shuffleRows();
 
         function selectImage(row, imgId) {
             if (row === 'top') {
@@ -126,85 +250,167 @@
             document.getElementById(imgId).classList.add("selected");
         }
 
+        function shuffleRows() {
+            // Reset game state
+            document.body.classList.remove('game-complete');
+            document.getElementById('victoryScreen').style.display = 'none';
+            selectedTop = null;
+            selectedBottom = null;
+            matchedPairs = 0;
+            document.getElementById('result').textContent = '';
+            
+            // Clear existing GIFs
+            const gifContainer = document.getElementById('gifContainer');
+            gifContainer.innerHTML = '';
+            
+            // Reset all images
+            document.querySelectorAll('.matched, .selected').forEach(img => {
+                img.classList.remove("matched", "selected");
+            });
+            
+            // Hide next level button
+            document.getElementById('nextLevelButton').style.display = 'none';
+            
+            // Shuffle both rows
+            shuffleRow('topRow');
+            shuffleRow('bottomRow');
+        }
+
+        function shuffleRow(rowId) {
+            const row = document.getElementById(rowId);
+            const images = Array.from(row.children);
+            
+            // Add shuffle animation
+            images.forEach(img => img.classList.add('shuffling'));
+            
+            setTimeout(() => {
+                // Fisher-Yates shuffle algorithm
+                for (let i = images.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    row.appendChild(images[j]);
+                }
+                
+                // Remove animation after shuffle completes
+                setTimeout(() => {
+                    images.forEach(img => img.classList.remove('shuffling'));
+                }, 500);
+            }, 50);
+        }
+
         function matchImages() {
             const result = document.getElementById("result");
+            
+            // Validate selection
             if (!selectedTop || !selectedBottom) {
                 result.textContent = "Please select one image from each row.";
                 return;
             }
+
+            // Check if match is correct
             if (correctPairs[selectedBottom] === selectedTop) {
-                result.textContent = "✅ Correct match!";
-                result.style.color = "green";
-                document.getElementById(selectedTop).classList.add("matched");
-                document.getElementById(selectedBottom).classList.add("matched");
-                document.getElementById(selectedTop).classList.remove("selected");
-                document.getElementById(selectedBottom).classList.remove("selected");
-
-                matchedPairs++; // Increment the matched pairs count
-
-                // Check if all matches are made
-                const isEasyLevel = window.location.pathname.includes("/match/easy");
-                const requiredMatches = isEasyLevel ? 4 : 4; // Adjust the number if needed
-
-                if (matchedPairs === requiredMatches) {
-                    // Move all correct bottom images under their corresponding top images
-                    Object.keys(correctPairs).forEach((bottomId) => {
-                        const topId = correctPairs[bottomId];
-                        const bottomImg = document.getElementById(bottomId);
-                        const topImg = document.getElementById(topId);
-
-                        if (topImg && bottomImg) {
-                            // Create a new div to wrap the pair (top + bottom) vertically
-                            const pairDiv = document.createElement("div");
-                            pairDiv.style.display = "flex";
-                            pairDiv.style.flexDirection = "column";
-                            pairDiv.style.alignItems = "center";
-                            pairDiv.style.margin = "10px";
-
-                            // Move the top and bottom images into the pair div
-                            topImg.parentNode.insertBefore(pairDiv, topImg);
-                            pairDiv.appendChild(topImg);
-                            pairDiv.appendChild(bottomImg);
-                        }
-                    });
-
-                    // Create a gap container for GIF placeholders
-                    const gapContainer = document.getElementById("gapContainer");
-                    gapContainer.style.height = "30px"; // Add a gap of desired height
-                    gapContainer.style.display = "grid";
-                    gapContainer.style.gridTemplateColumns = "repeat(4, 1fr)";
-                    gapContainer.style.gap = "10px";
-
-                    // Add placeholders for GIFs (you can replace this with your actual GIFs later)
-                    const gifPlaceholders = [];
-                    for (let i = 0; i < 4; i++) {
-                        const gifPlaceholder = document.createElement("div");
-                        gifPlaceholder.style.backgroundColor = "#f3f3f3"; // Placeholder color
-                        gifPlaceholder.style.height = "100px"; // Height of the placeholder
-                        gifPlaceholder.style.border = "1px solid #000";
-                        gifPlaceholder.style.textAlign = "center";
-                        gifPlaceholder.textContent = "GIF " + (i + 1);
-                        gifPlaceholders.push(gifPlaceholder);
-                        gapContainer.appendChild(gifPlaceholder);
-                    }
-
-                    // Show the "Next Level" button
-                    const nextLevelButton = document.getElementById("nextLevelButton");
-                    nextLevelButton.style.display = "block";
-                    const redirectButton = document.getElementById("redirectButton");
-                    redirectButton.textContent = isEasyLevel ? "Go to Hard" : "Go to Easy";
-                }
-
-                selectedTop = null;
-                selectedBottom = null;
+                handleCorrectMatch();
             } else {
-                result.textContent = "❌ Incorrect match. Try again.";
-                result.style.color = "red";
-                document.getElementById(selectedTop).classList.remove("selected");
-                document.getElementById(selectedBottom).classList.remove("selected");
-                selectedTop = null;
-                selectedBottom = null;
+                handleIncorrectMatch();
             }
+        }
+
+        function handleCorrectMatch() {
+            const result = document.getElementById("result");
+            result.textContent = "✅ Correct match!";
+            result.style.color = "green";
+            
+            // Mark images as matched
+            document.getElementById(selectedTop).classList.add("matched");
+            document.getElementById(selectedBottom).classList.add("matched");
+            document.getElementById(selectedTop).classList.remove("selected");
+            document.getElementById(selectedBottom).classList.remove("selected");
+            
+            // Show visual feedback
+            showFeedback();
+            matchedPairs++;
+
+            // Check for game completion
+            if (matchedPairs === Object.keys(correctPairs).length / 2) {
+                celebrateVictory();
+            }
+
+            selectedTop = null;
+            selectedBottom = null;
+        }
+
+        function handleIncorrectMatch() {
+            const result = document.getElementById("result");
+            result.textContent = "❌ Incorrect match. Try again.";
+            result.style.color = "red";
+            
+            // Deselect images
+            document.getElementById(selectedTop).classList.remove("selected");
+            document.getElementById(selectedBottom).classList.remove("selected");
+            
+            selectedTop = null;
+            selectedBottom = null;
+        }
+
+        function celebrateVictory() {
+            // Show confetti
+            showConfetti();
+            
+            // Show victory screen after a short delay
+            setTimeout(() => {
+                document.body.classList.add('game-complete');
+                showVictoryScreen();
+                
+                // Scroll to victory screen smoothly
+                setTimeout(() => {
+                    document.getElementById('victoryScreen').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }, 300);
+            }, 800);
+        }
+
+        function showVictoryScreen() {
+            const victoryScreen = document.getElementById('victoryScreen');
+            const gifContainer = document.getElementById('gifContainer');
+            
+            // Display victory screen
+            victoryScreen.style.display = 'block';
+            
+            // Add celebration GIFs
+            GIF_PATHS.forEach(gifPath => {
+                const gif = document.createElement('img');
+                gif.src = gifPath;
+                gif.className = 'celebration-gif';
+                gifContainer.appendChild(gif);
+            });
+            
+            // Show next level button
+            document.getElementById('nextLevelButton').style.display = 'block';
+            document.getElementById('redirectButton').textContent = 
+                window.location.pathname.includes("/match/easy") ? "Go to Hard" : "Go to Easy";
+        }
+
+        function showFeedback() {
+            const feedback = document.getElementById('correctFeedback');
+            feedback.style.display = 'block';
+            setTimeout(() => {
+                feedback.style.display = 'none';
+            }, 1500);
+        }
+
+        function showConfetti() {
+            document.getElementById('confetti-canvas').style.display = 'block';
+            jsConfetti.addConfetti({
+                emojis: ['🎉', '✨', '🏆', '😊', '👍'],
+                emojiSize: 30,
+                confettiNumber: 100,
+                spread: 360
+            });
+            
+            setTimeout(() => {
+                document.getElementById('confetti-canvas').style.display = 'none';
+            }, 3000);
         }
 
         function redirectToNextLevel() {
