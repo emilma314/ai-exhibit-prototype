@@ -34,9 +34,10 @@
         {% endfor %}
     </div>
 
-    <div class="button-container">
-        <div style="flex-grow: 1;"></div> <!-- Left spacer -->
+    <div class="center-button-container">
         <button onclick="confirmSelection()" class="primary-button">Apply Style</button>
+    </div>
+    <div class="right-button-container">
         <button onclick="window.location.href='/match/easy'" class="nav-button">View Exhibit 1</button>
     </div>
 
@@ -221,18 +222,66 @@
         }
     </script>
 <style>
-    .image-option, .style-option {
-        display: inline-block;
+    .style-option {
+        flex: 1;
+        max-width: calc(25vw - 10px);
         cursor: pointer;
-        margin: 10px;
         border: 2px solid transparent;
         padding: 5px;
+        display: flex;
+        flex-direction: column; /* Ensures the image is above the text */
+        justify-content: center;
+        align-items: center;
+        text-align: center; /* Center align the text */
     }
-    .image-option.selected, .style-option.selected {
-        border: 2px solid blue;
+
+    .image-selection, .style-selection {
+        display: flex;
+        justify-content: center; /* Center images horizontally */
+        gap: 10px; /* Add some spacing between images */
+        flex-wrap: nowrap; /* Prevent images from wrapping */
+        width: 80vw; /* Make container span full screen width */
+        padding: 10px;
+        box-sizing: border-box;
     }
+
+    .image-option, .style-option {
+        flex: 1; /* Allow images to take up equal space */
+        max-width: calc(25vw - 10px); /* Each image gets about 1/4th of the screen width */
+        cursor: pointer;
+        border: 2px solid transparent;
+        padding: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .image-option img, .style-option img {
+        width: 80%; /* Ensure images fully utilize their available space */
+        height: auto; /* Maintain aspect ratio */
+        object-fit: contain;
+    }
+
+    /* 🔹 Responsive Fixes for Smaller Screens */
+    @media (max-width: 800px) { 
+        .image-selection, .style-selection {
+            flex-wrap: wrap; /* Allow wrapping if necessary */
+        }
+        .image-option, .style-option {
+            max-width: calc(50vw - 10px); /* Two images per row on medium screens */
+        }
+    }
+
+    @media (max-width: 500px) {
+        .image-option, .style-option {
+            max-width: 100%; /* One image per row on small screens */
+        }
+    }
+    
+    
+
     .small-img {
-        width: 100px;
+        width: 300px;
         height: auto;
     }
     .large-img {
@@ -244,17 +293,32 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-    }
-    #result-display > div {
         width: 100%;
-        position: relative;
-        height: 400px;
+        margin-top: 20px; /* Reduce spacing */
     }
-    .button-container {
+
+    #result-display > div {
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
+        align-items: center;
+        gap: 10px; /* Reduce space between images */
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    .center-button-container {
+        display: flex;
+        justify-content: center; /* Centers the buttons */
         align-items: center;
         width: 100%;
+        margin-top: 20px; /* Adds spacing */
+    }
+    .right-button-container {
+        display: flex;
+        justify-content: right; /* Centers the buttons */
+        align-items: right;
+        width: 100%;
+        margin-top: 20px; /* Adds spacing */
     }
     .primary-button {
         padding: 10px 20px;
