@@ -1,0 +1,182 @@
+/* ────────────────────────────────────────────────────────────────
+   theme.css   (no HTML—just drop into /static/css/theme.css)
+   Link in each page:  <link rel="stylesheet" href="/static/css/theme.css">
+   Give each page: <body id="display">  or  <body id="control">
+──────────────────────────────────────────────────────────────── */
+
+/* =====  DEFAULT “KNOBS”  ====================================== */
+:root{
+    /* kiosk canvas size  (override per screen below) */
+    --screen-width:  1280px;
+    --screen-height:  800px;
+  
+    /* background art  */
+    --bg-image: url("/static/backgrounds/control-bg.png");
+  
+    /* banner geometry inside that canvas */
+    --banner-top:    120px;
+    --banner-bottom: 120px;
+  
+    /* safe margins inside canvas */
+    --safe-left:   20px;
+    --safe-right:  20px;
+  
+    /* typography */
+    --font-family:  "Roboto", sans-serif;
+    --prompt-size:  clamp(20px,2vw,32px);
+    --body-size:    clamp(18px,1.8vw,28px);
+  
+    /* colours / fx */
+    --text-color: #000;
+    --shadow:     0 8px 24px rgba(0,0,0,.45);
+  }
+  
+  /* =====  DISPLAY-SCREEN OVERRIDES  ============================= */
+  body#display{
+    --screen-width:  1920px;
+    --screen-height: 1080px;
+  
+    --bg-image: url("/static/backgrounds/display-bg.png");
+  
+    --banner-top:    180px;   /* pixel heights of top / bottom bars   */
+    --banner-bottom: 180px;
+  
+    --safe-left:    120px;
+    --safe-right:   120px;
+  
+    --prompt-size:  clamp(22px,2.4vw,36px);
+    --text-color:   #fff;
+  }
+  
+
+  body#control{
+    /* … your existing control-screen vars … */
+  
+    /* NEW ↓ : keep aspect ratio of bg art  */
+    --bg-size: contain;      /* <- creates pillar/letter boxing     */
+  }
+  
+
+  /* =====  FLEX-CENTER THE VIEWPORT  ============================= */
+  html,body{
+    margin:0; height:100%; width:100%;
+    display:flex; justify-content:center; align-items:center;
+    background:#000;            /* letter-box on dev monitor          */
+    overflow:hidden;
+    font-family:var(--font-family);
+  }
+  
+  /* =====  FIXED PIXEL CANVAS  =================================== */
+  #viewport{
+    position:relative;
+    width: var(--screen-width);
+    height:var(--screen-height);
+  
+    /* use whichever size mode the page defines */
+    background:var(--bg-image) center / var(--bg-size, 100% 100%) no-repeat;
+  
+    overflow:hidden;
+    color:var(--text-color);
+  }
+  
+  /* =====  SAFE-AREA (relative to the canvas)  =================== */
+  #safe-area{
+    position:absolute;
+    top:   var(--banner-top);
+    bottom:var(--banner-bottom);
+    left:  var(--safe-left);
+    right: var(--safe-right);
+  
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  
+    overflow:hidden;         /* ← NEW: clip anything that’s too big */
+  }
+  
+  /* =====  PROMPT LINE  ========================================== */
+  #prompt{
+    font-size:var(--prompt-size);
+    margin:0 0 1.2rem 0;
+    line-height:1.2;
+    text-shadow:2px 2px 6px rgba(0,0,0,.6);
+  }
+  /* =====  HEADLINE  ========================================== */
+  #headline{
+    font-size: var(--prompt-size);
+    margin: 0 0 1rem 0;
+    color: var(--text-color);
+  }
+  /* quick flex helpers */
+  .col         { display:flex; flex-direction:column; }
+  .flex-center { display:flex; align-items:center; justify-content:center; }
+
+/* 1 ▸  The leftover square below the prompt  */
+#asset-box{
+  flex: 1 1 0;               /* grow + shrink to fill remaining height   */
+  min-height: 0;             /* let it shrink below content size         */
+  min-width:  0;
+
+  aspect-ratio: 1 / 1;       /* width always equals height  (square)     */
+  align-self: center;        /* centre the square inside safe-area       */
+
+  display: flex;             /* centre whatever is inside it             */
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;          /* nothing bleeds outside                   */
+}
+
+/* 2 ▸  Make #asset itself *fill* #asset-box  */
+#asset{
+  width:  100%;
+  height: 100%;              /* ← inherits full box height & width       */
+
+  display: flex;             /* centre the media element                 */
+  justify-content: center;
+  align-items: center;
+}
+
+/* 3 ▸  The picture now scales *inside* #asset, never crops              */
+#asset img,
+#asset video{
+  max-width:  100%;
+  max-height: 100%;
+  width:  auto;              /* keep the 1 : 1 aspect ratio              */
+  height: auto;
+  object-fit: contain;       /* entire image always visible              */
+}
+
+
+  /* =====  CHOOSER CARDS (touch screen only)  ==================== */
+  .grid{
+    display:grid;
+    gap:1rem;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    max-width:900px;
+  }
+  
+  .choice{
+    cursor:pointer;
+    border:3px solid transparent;
+    border-radius:8px;
+    transition:.2s;
+  }
+  .choice:hover,
+  .choice.selected{
+    border-color:#3b82f6;
+  }
+  .choice img{
+    width:100%;
+    border-radius:8px 8px 0 0;
+  }
+  .choice span{
+    display:block;
+    padding:.4em .2em;
+    text-align:center;
+    background:#f3f4f6;
+    border-radius:0 0 8px 8px;
+    font-size:var(--body-size);
+  }
+  

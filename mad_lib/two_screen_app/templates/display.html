@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Display</title>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<style>
+ /* html,body{margin:0; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#111;} */
+ /* p{color:#eee; font-family:sans-serif; max-width:90vw; text-align:center;} */
+ /* #asset img,#asset video{max-height:85vh; max-width:95vw; display:block; margin:auto;} */
+</style>
+<link rel="stylesheet" href="/static/css/theme.css">
+</head>
+<body id="display">
+  <div id="viewport">
+    <div id="safe-area" class="col">
+
+      <p id="prompt">Make your selections on the touch screen.</p>
+      <div id="asset-box"><div id="asset"></div></div>
+
+    </div>
+  </div>
+
+<script>
+const ASSET_DIR = "/static/assets/";
+const socket = io();
+
+socket.on("update_display", ({prompt, code})=>{
+  if(!code){                    // nothing yet
+    document.getElementById("prompt").textContent =
+        "Make your selections on the touch screen.";
+    document.getElementById("asset").innerHTML='';
+    return;
+  }
+  document.getElementById("prompt").textContent = prompt;
+  // First try PNG, else fall back to MP4
+  const imgPath = ASSET_DIR + code + ".png";
+  fetch(imgPath,{method:"HEAD"}).then(r=>{
+     if(r.ok){
+       document.getElementById("asset").innerHTML =
+           `<img src="${imgPath}" alt="${prompt}">`;
+     }else{
+       document.getElementById("asset").innerHTML =
+           `<video src="${ASSET_DIR+code+".mp4"}" autoplay loop muted playsinline></video>`;
+     }
+  });
+});
+
+// When this tab first opens, ask for current state
+socket.emit("request_latest");
+</script>
+</body>
+</html>

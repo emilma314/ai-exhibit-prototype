@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Pick‑a‑Picture (local assets)</title>
+<style>
+  :root { font-family: sans-serif; --thumb: 220px; }
+  body,html { margin:0; height:100%; display:flex; flex-direction:column; }
+  h1      { margin:0 0 .4em 0; text-align:center; }
+  #stage  { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .grid   { display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(var(--thumb),1fr)); max-width:900px; }
+  .choice { cursor:pointer; border:3px solid transparent; border-radius:8px; transition:.2s; }
+  .choice:hover,.choice.selected{ border-color:#3b82f6; }
+  .choice img { width:100%; border-radius:8px 8px 0 0; }
+  .choice span{ display:block; padding:.4em .2em; text-align:center; background:#f3f4f6; border-radius:0 0 8px 8px; }
+  #result img,#result video{ max-height:70vh; max-width:95vw; }
+  #backBtn   { margin-top:1rem; padding:.6em 1.2em; font-size:1.1rem; }
+</style>
+</head>
+<body>
+
+<h1 id="headline">Choose a subject</h1>
+<div id="stage"></div>
+
+<script>
+/* ---------- DATA MODEL ---------- */
+const steps = [
+  { key:'subject', prompt:['A ', ' '],           options:['cat','dog','chinchilla'] },
+  { key:'action',  prompt:[' ', ' '],       options:['eating spaghetti','vacuuming','riding a skateboard'] },
+  { key:'scene',   prompt:[' ', ' '],       options:['on a snowy mountain','in a forest','on the beach'] },
+  { key:'style',   prompt:[' in the style of ', ''], options:['studio ghibli','comic book','photorealistic'] }
+];
+
+/* letter codes for filename positions  */
+const letter = {
+  subject : { 'cat':'c',
+              'dog':'d',
+              'chinchilla':'h' },
+  scene   : { 'on a snowy mountain':'s',
+              'in a forest':'f',
+              'on the beach':'b' },
+  action  : { 'eating spaghetti':'e',
+              'vacuuming':'v',
+              'riding a skateboard':'s' },
+  style   : { 'studio ghibli':'g',
+              'comic book':'c',
+              'photorealistic':'p' }
+};
+
+/* thumbnails for chooser screens (put your own paths here) */
+const thumb = {
+  cat:'thumbs/cat.jpg',  dog:'thumbs/dog.jpg', chinchilla:'thumbs/chinchilla.jpg',
+  'eating spaghetti':'thumbs/eating.jpg', 'vacuuming':'thumbs/vacuum.jpg', 'riding a skateboard':'thumbs/skate.jpg',
+  'on a snowy mountain':'thumbs/snow.jpg', 'in a forest':'thumbs/forest.jpg', 'on the beach':'thumbs/beach.jpg',
+  'studio ghibli':'thumbs/ghibli.jpg','comic book':'thumbs/comic.jpg','photorealistic':'thumbs/photo.jpg'
+};
+/* --------------------------------- */
+
+let selections={}, stepIndex=0;
+const stage   = document.getElementById('stage');
+const headline= document.getElementById('headline');
+
+/* ---- UI FLOW ---- */
+function renderChoices(){
+  const step=steps[stepIndex];
+  headline.textContent=`Choose ${step.key}`;
+  const grid=document.createElement('div'); grid.className='grid';
+  step.options.forEach(opt=>{
+    const card=document.createElement('div'); card.className='choice';
+    card.innerHTML=`<img src="${thumb[opt]}"><span>${opt}</span>`;
+    card.onclick=()=>{ selections[step.key]=opt; next(); };
+    grid.appendChild(card);
+  });
+  stage.replaceChildren(grid);
+}
+
+function next(){
+  if(++stepIndex<steps.length) renderChoices();
+  else showResult();
+}
+
+function buildPrompt(){
+  let txt='';
+  steps.forEach(({key,prompt})=>{
+    txt+=prompt[0]+selections[key]+prompt[1];
+    console.log(txt);
+  });
+  return txt.trim();
+}
+
+/* ---- FINAL DISPLAY ---- */
+function showResult(){
+  const prompt = buildPrompt();
+  headline.textContent='Loading asset…';
+
+  /* build 4‑letter filename */
+  const code =
+      letter.subject [ selections.subject ] +
+      letter.scene   [ selections.scene   ] +
+      letter.action  [ selections.action  ] +
+      letter.style   [ selections.style   ];
+
+  const base = code.toLowerCase();          // dfsp etc.
+  const img = new Image();
+  img.src   = `images/${base}.png`;
+  img.onload = ()=>renderAsset(`<img src="${img.src}">`, prompt);
+  img.onerror= ()=>renderAsset(
+      `<video src="${base}.mp4" autoplay loop muted playsinline></video>`, prompt);
+
+}
+
+function renderAsset(markup, prompt){
+  stage.innerHTML=`
+    <p style="font-size:1.2rem; text-align:center; max-width:95vw;">${prompt}</p>
+    <div id="result">${markup}</div>
+    <button id="backBtn" onclick="resetFlow()">Start over</button>`;
+  headline.textContent='Result';
+}
+
+function resetFlow(){
+  selections={}; stepIndex=0; renderChoices();
+}
+
+/* ---- KICK OFF ---- */
+renderChoices();
+</script>
+</body>
+</html>

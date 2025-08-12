@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Chooser</title>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<style>
+ :root { --thumb: 220px; font-family: sans-serif; }
+ body,html { margin:0; height:100%; display:flex; flex-direction:column; }
+ h1 { margin:0 0 .4em 0; text-align:center; }
+ #stage{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+ .grid{ display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(var(--thumb),1fr)); max-width:900px; }
+ .choice{ cursor:pointer; border:3px solid transparent; border-radius:8px; transition:.2s; }
+ .choice:hover,.choice.selected{ border-color:#3b82f6; }
+ .choice img{ width:100%; border-radius:8px 8px 0 0; }
+ .choice span{ display:block; padding:.4em .2em; text-align:center; background:#f3f4f6; border-radius:0 0 8px 8px; }
+ #stage p{ font-size:1.1rem; text-align:center; }
+
+</style>
+<link rel="stylesheet" href="/static/css/theme.css">
+</head>
+<body id="control">
+  <div id="viewport">
+    <div id="safe-area">
+      <h1 id="headline">Choose a subject</h1>   <!-- ← restored -->
+      <div id="stage"></div>                    <!-- chooser grid -->
+    </div>
+  </div>
+
+<script>
+/* -------------------- CONFIG ----------------------------------- */
+const THUMB_DIR = "/static/thumbs/";
+const ASSET_DIR = "/static/assets/";
+
+const steps = [
+  { key:'subject', prompt:['Prompt: A ', ''],           options:['cat','dog','chinchilla'] },
+  { key:'action',  prompt:[' ', ' '],           options:['eating spaghetti','vacuuming','riding a skateboard'] },
+  { key:'scene',   prompt:[' ', ' '],           options:['on a snowy mountain','in a forest','on the beach'] },
+  { key:'style',   prompt:[' in a ', ''], options:['studio ghibli style','comic book style','photorealistic style'] }
+];
+const code = {
+  subject : { 'cat':'c', 'dog':'d', 'chinchilla':'h' },
+  scene   : { 'on a snowy mountain':'s', 'in a forest':'f', 'on the beach':'b' },
+  action  : { 'eating spaghetti':'e', 'vacuuming':'v', 'riding a skateboard':'s' },
+  style   : { 'studio ghibli style':'g', 'comic book style':'c', 'photorealistic style':'p' }
+};
+const thumb = {   /* map option -> thumb filename */
+  cat:'cat.jpg', dog:'dog.jpg', chinchilla:'chinchilla.jpg',
+  'eating spaghetti':'eating.jpg', 'vacuuming':'vacuum.jpg', 'riding a skateboard':'skate.jpg',
+  'on a snowy mountain':'snow.jpg','in a forest':'forest.jpg','on the beach':'beach.jpg',
+  'studio ghibli style':'ghibli.jpg','comic book style':'comic.jpg','photorealistic style':'photo.jpg'
+};
+/* --------------------------------------------------------------- */
+
+const socket = io();          // Same origin websocket
+const stage = document.getElementById("stage");
+const headline = document.getElementById("headline");
+
+let selections={}, stepIndex=0;
+
+function renderChoices(){
+  const step = steps[stepIndex];
+  headline.textContent = `Choose ${step.key}`;
+  const grid = document.createElement("div");
+  grid.className = "grid";
+  step.options.forEach(opt=>{
+    const card=document.createElement("div"); card.className="choice";
+    card.innerHTML = `<img src="${THUMB_DIR+thumb[opt]}"><span>${opt}</span>`;
+    card.onclick = ()=>{ selections[step.key]=opt; next(); };
+    grid.appendChild(card);
+  });
+  stage.replaceChildren(grid);
+}
+
+function next(){
+  if(++stepIndex<steps.length){ renderChoices(); return; }
+  finalize();
+}
+
+function buildPrompt(){
+  return steps.map(({key,prompt}) =>
+    (prompt[0]??'') + selections[key] + (prompt[1]??'')
+  ).join('').trim();
+}
+
+function finalize(){
+  const prompt = buildPrompt();
+  const fileCode =
+        code.subject[selections.subject] +
+        code.scene  [selections.scene  ] +
+        code.action [selections.action ] +
+        code.style  [selections.style ];
+  socket.emit("new_selection", {prompt, code:fileCode});
+  stage.innerHTML =
+      `<p>Sent! Look at the big screen.</p>
+       <button onclick="reset()">Start another</button>`;
+  headline.textContent = 'Done';
+}
+
+function reset(){
+  selections={}; stepIndex=0; renderChoices();
+}
+
+renderChoices();
+</script>
+</body>
+</html>
