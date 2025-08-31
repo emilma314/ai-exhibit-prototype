@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}Exhibit 2 – Display{% endblock %}
+{% block body_id %}display{% endblock %}
+
+{% block main %}
+  <p id="prompt">Make your selections on the touch screen.</p>
+  <div id="asset-box"><div id="asset"></div></div>
+
+  <script>
+  const ASSET_DIR = "/static/assets/";
+  const socket = io();
+
+  socket.on("update_display", ({prompt, code})=>{
+    if(!code){
+      document.getElementById("prompt").textContent =
+          "Make your selections on the touch screen.";
+      document.getElementById("asset").innerHTML='';
+      return;
+    }
+    document.getElementById("prompt").textContent = prompt;
+    const imgPath = ASSET_DIR + code + ".png";
+    fetch(imgPath,{method:"HEAD"}).then(r=>{
+       if(r.ok){
+         document.getElementById("asset").innerHTML =
+             `<img src="${imgPath}" alt="${prompt}">`;
+       }else{
+         document.getElementById("asset").innerHTML =
+             `<video src="${ASSET_DIR+code+".mp4"}" autoplay loop muted playsinline></video>`;
+       }
+    });
+  });
+
+  socket.emit("request_latest");
+  </script>
+{% endblock %}

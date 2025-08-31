@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% block title %}Exhibit 2 – Control{% endblock %}
+{% block body_id %}control{% endblock %}
+
+{% block main %}
+  <h1 id="headline">Choose a subject</h1>
+  <div id="stage"></div>
+
+  <script>
+  /* JS from your original control.html */
+  const THUMB_DIR = "/static/thumbs/";
+  const ASSET_DIR = "/static/assets/";
+
+  const steps = [
+    { key:'subject', prompt:['Prompt: A ', ''], options:['cat','dog','chinchilla'] },
+    { key:'action',  prompt:[' ', ' '], options:['eating spaghetti','vacuuming','riding a skateboard'] },
+    { key:'scene',   prompt:[' ', ' '], options:['on a snowy mountain','in a forest','on the beach'] },
+    { key:'style',   prompt:[' in a ', ''], options:['studio ghibli style','comic book style','photorealistic style'] }
+  ];
+  const code = {
+    subject : { 'cat':'c', 'dog':'d', 'chinchilla':'h' },
+    scene   : { 'on a snowy mountain':'s', 'in a forest':'f', 'on the beach':'b' },
+    action  : { 'eating spaghetti':'e', 'vacuuming':'v', 'riding a skateboard':'s' },
+    style   : { 'studio ghibli style':'g', 'comic book style':'c', 'photorealistic style':'p' }
+  };
+  const thumb = {
+    cat:'cat.jpg', dog:'dog.jpg', chinchilla:'chinchilla.jpg',
+    'eating spaghetti':'eating.jpg', 'vacuuming':'vacuum.jpg', 'riding a skateboard':'skate.jpg',
+    'on a snowy mountain':'snow.jpg','in a forest':'forest.jpg','on the beach':'beach.jpg',
+    'studio ghibli style':'ghibli.jpg','comic book style':'comic.jpg','photorealistic style':'photo.jpg'
+  };
+
+  const socket = io();
+  const stage = document.getElementById("stage");
+  const headline = document.getElementById("headline");
+
+  let selections={}, stepIndex=0;
+
+  function renderChoices(){
+    const step = steps[stepIndex];
+    headline.textContent = `Choose ${step.key}`;
+    const grid = document.createElement("div");
+    grid.className = "grid";
+    step.options.forEach(opt=>{
+      const card=document.createElement("div"); card.className="choice";
+      card.innerHTML = `<img src="${THUMB_DIR+thumb[opt]}"><span>${opt}</span>`;
+      card.onclick = ()=>{ selections[step.key]=opt; next(); };
+      grid.appendChild(card);
+    });
+    stage.replaceChildren(grid);
+  }
+
+  function next(){
+    if(++stepIndex<steps.length){ renderChoices(); return; }
+    finalize();
+  }
+
+  function buildPrompt(){
+    return steps.map(({key,prompt}) =>
+      (prompt[0]??'') + selections[key] + (prompt[1]??'')
+    ).join('').trim();
+  }
+
+  function finalize(){
+    const prompt = buildPrompt();
+    const fileCode =
+          code.subject[selections.subject] +
+          code.scene  [selections.scene  ] +
+          code.action [selections.action ] +
+          code.style  [selections.style ];
+    socket.emit("new_selection", {prompt, code:fileCode});
+    stage.innerHTML =
+        `<p>Sent! Look at the big screen.</p>
+         <button onclick="reset()">Start another</button>`;
+    headline.textContent = 'Done';
+  }
+
+  function reset(){
+    selections={}; stepIndex=0; renderChoices();
+  }
+
+  renderChoices();
+  </script>
+{% endblock %}

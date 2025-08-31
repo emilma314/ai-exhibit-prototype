@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}AI Exhibit{% endblock %}</title>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <link rel="stylesheet" href="/static/css/theme.css">
+    <style>
+        body, html { margin:0; height:100%; font-family: sans-serif; }
+        nav { background:#222; color:#fff; padding:0.6em 1em; display:flex; gap:1em; }
+        nav a { color:#fff; text-decoration:none; }
+    </style>
+</head>
+<body id="{% block body_id %}{% endblock %}">
+    <nav>
+        <a href="{{ url_for('exhibit1_control') }}">Exhibit 1</a>
+        <a href="{{ url_for('exhibit2_control') }}">Exhibit 2</a>
+    </nav>
+
+    <div id="viewport">
+        <div id="safe-area">
+            {% block main %}{% endblock %}
+        </div>
+    </div>
+</body>
+</html>
